@@ -573,7 +573,7 @@ void DeclarativeDBusInterface::connectSignalHandlerCallback(const QString &intro
 
     if (connectPropertyInterface) {
         bool success = conn.connect(m_service, m_path, PropertyInterface, QLatin1String("PropertiesChanged"),
-                                    "sa{sv}as", this, SLOT(notifyPropertyChange()));
+                                    "sa{sv}as", this, SLOT(notifyPropertyChange(QString,QVariantMap,QStringList)));
         if (!success) {
             qmlInfo(this) << "Failed to connect to DBus property interface signaling, service: "
                           << m_service << " path: " << m_path;
@@ -581,9 +581,11 @@ void DeclarativeDBusInterface::connectSignalHandlerCallback(const QString &intro
     }
 }
 
-void DeclarativeDBusInterface::notifyPropertyChange()
+void DeclarativeDBusInterface::notifyPropertyChange(const QString &interface,
+                                                    const QVariantMap &changedProperties,
+                                                    const QStringList &invalidatedProperties)
 {
-    emit propertiesChanged();
+    emit propertiesChanged(interface, changedProperties, invalidatedProperties);
 }
 
 void DeclarativeDBusInterface::disconnectSignalHandler()
